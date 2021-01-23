@@ -8,10 +8,11 @@ services:
 jobs:
   include:
     - name: build and upload docker image
-      script:
+      before_script:
         - docker --version # print the version for logging
+        - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+      script:
         - docker build -t udagram-frontend .
         - docker tag udagram-frontend langerca/udagram-frontend:latest
       after_success:
-        - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
         - docker push langerca/udagram-frontend:latest
